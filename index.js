@@ -1,5 +1,6 @@
 // 1: what??? -> ES5
 var express = require('express')
+const { MongoClient } = require('mongodb');
 
 // magic
 var app = express()
@@ -32,6 +33,29 @@ app.get('/why', (req, res) => {
 app.post('/myLife', (req, res) => {
     // post with json
     res.send(req.body.myLife);
+})
+
+// set up mongo
+// -> package.json
+// -> docker-compose
+// docker compose up
+// studio 3t
+
+client = new MongoClient("mongodb://user:user@localhost:27017");
+
+client.connect();
+// databases inside connection
+const db = client.db('groupr');
+// multiple collections possible
+const users = db.collection('user');
+
+app.post('/addUser', (req, res) => {
+    users.insertOne(req.body);
+    res.send("done!");
+})
+
+app.get("/getUsers", async (req, res) => {
+    res.send(await users.find().toArray())
 })
 // IMPORTANT
 app.listen(3000);
